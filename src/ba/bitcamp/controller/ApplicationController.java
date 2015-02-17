@@ -34,6 +34,12 @@ public class ApplicationController {
 		}
 	}
 	
+	
+	public static void list(){
+	    Contact [] all = Contact.all();
+	    ApplicationView.list(all);
+	}
+	
 	public static void main(String[] args) {
 		
 		/* Povezivanje sa  bazom */

@@ -12,6 +12,7 @@ public class Main {
 	
 	public static void  init(){
 		window = new JFrame("BitBook");
+		window.setLocation(700, 500);
 		window.setSize(windowWidth, windowHeight);
 		window.setResizable(false);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

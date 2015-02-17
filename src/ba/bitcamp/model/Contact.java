@@ -2,6 +2,7 @@ package ba.bitcamp.model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
 
 public class Contact extends Application {
 
@@ -9,78 +10,125 @@ public class Contact extends Application {
 	private String name;
 	private String surname;
 	private String number;
-	
+
 	protected static final String tableName = "contacts";
 
-	
 	/**
-	 *  Constructor for Contacts without parameters.
+	 * Constructor for Contacts without parameters.
 	 */
-	public Contact(){
+	public Contact() {
 		this.id = -1;
-		this.name="Unknown";
-		this.surname ="Unknown";
-		this.number =  "Unknown";
-		
+		this.name = "Unknown";
+		this.surname = "Unknown";
+		this.number = "Unknown";
+
 	}
-	
+
 	/**
 	 * Constructor for Contacts with three parameters.
-	 * @param name - name of user contact
-	 * @param surname - surname of user contact
-	 * @param number - number of telephone of user contact
+	 * 
+	 * @param name
+	 *            - name of user contact
+	 * @param surname
+	 *            - surname of user contact
+	 * @param number
+	 *            - number of telephone of user contact
 	 */
-    public Contact(String name, String surname, String number){
+	public Contact(String name, String surname, String number) {
 		this.id = -1;
-		this.name=name;
-		this.surname =surname;
-		this.number =  number;
+		this.name = name;
+		this.surname = surname;
+		this.number = number;
 	}
-    
-    /**
-     * Constructor for Contacts with three parameters.
-     * @param id - id number of contact.
-     * @param name - name of user contact.
-	 * @param surname - surname of user contact.
-	 * @param number - number of telephone of user contact.
-     */
-	public Contact(int id, String name, String surname, String number){
-		this.id =id;
-		this.name=name;
-		this.surname =surname;
-		this.number =  number;
-	}
-    
-	public static Contact find(int id){
-		ResultSet res = Application.find(id, tableName);
+	
+	public Contact(int id, String name, String surname) {
+		this.id = id;
+		this.name = name;
+		this.surname = surname;
 		
+	}
+
+	/**
+	 * Constructor for Contacts with three parameters.
+	 * 
+	 * @param id
+	 *            - id number of contact.
+	 * @param name
+	 *            - name of user contact.
+	 * @param surname
+	 *            - surname of user contact.
+	 * @param number
+	 *            - number of telephone of user contact.
+	 */
+	public Contact(int id, String name, String surname, String number) {
+		this.id = id;
+		this.name = name;
+		this.surname = surname;
+		this.number = number;
+	}
+
+	public static Contact find(int id) {
+		ResultSet res = Application.find(id, tableName);
+
 		try {
 			int cId = res.getInt("id");
 			String cName = res.getString("name");
 			String cSurname = res.getString("surname");
 			String cNumber = res.getString("number");
-			
+
 			return new Contact(cId, cName, cSurname, cNumber);
-			
+
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 			return null;
 		}
-		
-		
+
+	}
+
+	public boolean save() {
+		String values = String.format("(?, '%s', '%s', '%s')", this.name,
+				this.surname, this.number);
+		return Application.save(tableName, values);
+
+	}
+
+	public static Contact[] all() {
+		ResultSet rs = Application.all(tableName, "id, name, surname");
+		if (rs == null) {
+			return new Contact[0];
+		}
+		LinkedList<Contact> cl = new LinkedList<Contact>();
+		try {
+			while ( rs.next() ){
+				int id = rs.getInt("id");
+				String cName = rs.getString("name");
+				String cSurname = rs.getString("surname");
+				cl.add(new Contact(id, cName, cSurname));
+				
+			}
+			
+			Contact[] all =  new Contact[cl.size()];
+			cl.toArray(all);
+			return all;
+			
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+			return new Contact[0];
+		}
 	}
 	
-	public boolean save() {
-		String values = String.format("(?, '%s', '%s', '%s')", this.name, this.surname, this.number);
-		return Application.save(tableName, values);
+	public String getDisplayName(){
+		return this.name + " " + this.surname;
 	}
+
 	/**
 	 * @return the id
 	 */
 	public int getId() {
 		return id;
 	}
-    /**
+
+	/**
 	 * @return the name
 	 */
 	public String getName() {
@@ -88,7 +136,8 @@ public class Contact extends Application {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -102,7 +151,8 @@ public class Contact extends Application {
 	}
 
 	/**
-	 * @param surname the surname to set
+	 * @param surname
+	 *            the surname to set
 	 */
 	public void setSurname(String surname) {
 		this.surname = surname;
@@ -116,14 +166,11 @@ public class Contact extends Application {
 	}
 
 	/**
-	 * @param number the number to set
+	 * @param number
+	 *            the number to set
 	 */
 	public void setNumber(String number) {
 		this.number = number;
 	}
-
-
-
-
 
 }

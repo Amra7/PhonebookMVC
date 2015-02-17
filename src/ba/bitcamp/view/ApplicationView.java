@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -33,7 +34,7 @@ public class ApplicationView extends Main {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ApplicationController.addContact();
+				ApplicationController.list();
 				
 			}
 			
@@ -124,6 +125,86 @@ public class ApplicationView extends Main {
 		Main.replaceContent(content);
 		Main.setVisible();
 	}
+	
+	/*
+	 * Creates button for each contact in list
+	 * sets the name and the label for button
+	 * connect an action listener
+	 * and adds the button to content panel
+	 */
+	public static  void list(Contact[] all){
+		
+		int buttonHeight = 50;
+		
+		JPanel  content =  new JPanel();
+		content.setPreferredSize(new Dimension( ApplicationView.windowWidth-70, all.length * (buttonHeight + 20)));
+		
+		JButton back= new JButton("Back");
+		back.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
+		JButton add = new JButton("Add new Contact");
+		add.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
+		content.add(add);
+		content.add(back);
+		
+		if( all.length < 1){
+		JLabel greeting =  new JLabel("Welcome to BitBook");
+		Font greeetingfont = new Font("SansSerif", Font.BOLD, 30);
+		content.add(greeting);
+		greeting.setFont(greeetingfont);
+		}
+		
+		//TODO add ADD Button Contact
+		for ( int i=0; i<all.length; i++){
+			JButton current = new JButton(all[i].getDisplayName());
+			current.setName(Integer.toString(all[i].getId()));
+			current.setPreferredSize(new Dimension(ApplicationView.windowWidth -75, buttonHeight));
+			current.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO redirect to Contact
+					JButton clicked =(JButton)(e.getSource());
+					int id = Integer.parseInt(clicked.getName());
+					System.out.println("Korisnik: "+ id);
+				}
+				
+			});
+			content.add(current);
+		}
+		JScrollPane sp = new JScrollPane(content);
+//		sp.setPreferredSize(new Dimension( ApplicationView.windowWidth-10, ApplicationView.windowHeight));
+		sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		
+		Main.replaceContent(sp);
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 
 }

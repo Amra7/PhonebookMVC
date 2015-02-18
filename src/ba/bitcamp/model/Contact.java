@@ -67,6 +67,11 @@ public class Contact extends Application {
 		this.number = number;
 	}
 
+	/**
+	 * This method connects to the base and find the contact using 'id' of contact.
+	 * @param id - id number in base of contact.
+	 * @return contacts data that are found in base.
+	 */
 	public static Contact find(int id) {
 		ResultSet res = Application.find(id, tableName);
 
@@ -76,8 +81,10 @@ public class Contact extends Application {
 			String cSurname = res.getString("surname");
 			String cNumber = res.getString("number");
 
+			/*return the object of type Contact */
 			return new Contact(cId, cName, cSurname, cNumber);
 
+			/* If it does not fount the client return null and throws exception */
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 			return null;
@@ -85,13 +92,41 @@ public class Contact extends Application {
 
 	}
 
+ /**
+  * 
+  * Under the object(Contact) that this function has been called, takes the
+  * name, surname and number
+  * and sends it to the application model (puts it inside the query statement
+  *  check create and save from application)
+  * Checks whether it has saved the object or not;
+  * @return true if contact is saved in base or false if contact is not saved.
+  */
 	public boolean save() {
-		String values = String.format("(?, '%s', '%s', '%s')", this.name,
-				this.surname, this.number);
-		return Application.save(tableName, values);
+		String values = null;
+		if (this.id != -1){
+			values = String.format("('%d', '%s', '%s', '%s')", this.id, this.name,
+					this.surname, this.number);
+		} else {
+			values = String.format("(?, '%s', '%s', '%s')", this.name,
+					this.surname, this.number);
+		}
+		
+		int id = Application.save(tableName, values);
+		if (id == -1){
+			return false;
+		} else {
+			this.id= id;
+			return true;
+		}
 
 	}
 
+	/** 
+	 * Gets us all the contacts from the database; but only the name and surname
+	 * if we were to enter "*" as the second parameter, then we get all the
+	 * data;
+	 * @return all contacts in array list of contacts.
+	 */
 	public static Contact[] all() {
 		ResultSet rs = Application.all(tableName, "id, name, surname");
 		if (rs == null) {
@@ -117,6 +152,20 @@ public class Contact extends Application {
 		}
 	}
 	
+	// update TABLENAME set kolone WHERE id='id'
+	public void update(){
+		String sql= String.format("name = '%s', surname = '&s', number = '&s'",this.name, this.surname , this.number);
+		Application.update(tableName,this.id, sql);
+	}
+	
+	public static void delete(int id){
+		Application.delete(tableName, id);
+	}
+	/**
+	 * Gets us what we will put on our Buttons later; on every listed contact in
+	 * our view SHOW/ALL
+	 * @return
+	 */
 	public String getDisplayName(){
 		return this.name + " " + this.surname;
 	}
